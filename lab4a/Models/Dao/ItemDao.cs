@@ -14,7 +14,7 @@ namespace lab4a.Data.Dao
     }
     public async Task Create(Item item)
     {
-        try { await _db.Items.InsertOneAsync(item); }
+        try { await _db.Item.InsertOneAsync(item); }
         catch { throw; }
     }
     public async Task Delete(string id)
@@ -22,7 +22,7 @@ namespace lab4a.Data.Dao
         try
         {
             FilterDefinition<Item> data = Builders<Item>.Filter.Eq("Id", id);
-            await _db.Items.DeleteOneAsync(data);
+            await _db.Item.DeleteOneAsync(data);
         }
         catch { throw; }
     }
@@ -31,18 +31,18 @@ namespace lab4a.Data.Dao
         try
         {
             FilterDefinition<Item> filter = Builders<Item>.Filter.Eq("Id", id);
-            return await _db.Items.Find(filter).FirstOrDefaultAsync();
+            return await _db.Item.Find(filter).FirstOrDefaultAsync();
         }
         catch { throw; }
     }
     public async Task<IEnumerable<Item>> Read()
     {
-        try { return await _db.Items.Find(_ => true).ToListAsync(); }
+        try { return await _db.Item.Find(_ => true).ToListAsync(); }
         catch { throw; }
     }
     public async Task Update(Item item)
     {
-        try { await _db.Items.ReplaceOneAsync(filter: g => g.Id == item.Id, replacement: item); }
+        try { await _db.Item.ReplaceOneAsync(filter: g => g.Id == item.Id, replacement: item); }
         catch { throw; }
     }
 }
