@@ -35,12 +35,16 @@ namespace lab4a.Data.Dao
         }
         catch { throw; }
     }
-    public async Task<IEnumerable<Item>> Read()
-    {
-        try { return await _db.Item.Find(_ => true).ToListAsync(); }
-        catch { throw; }
-    }
-    public async Task Update(Item item)
+        public async Task<IEnumerable<Item>> Read(string id)
+        {
+            try
+            {
+                FilterDefinition<Item> filter = Builders<Item>.Filter.Eq("UserId", id);
+                return await _db.Item.Find(filter).ToListAsync();
+            }
+            catch { throw; }
+        }
+        public async Task Update(Item item)
     {
         try { await _db.Item.ReplaceOneAsync(filter: g => g.Id == item.Id, replacement: item); }
         catch { throw; }
@@ -52,7 +56,7 @@ public interface IItemDao
     Task Create(Item item);
     Task Delete(string id);
     Task<Item> Get(string id);
-    Task<IEnumerable<Item>> Read();
+    Task<IEnumerable<Item>> Read(string id);
     Task Update(Item item);
 }
 }
