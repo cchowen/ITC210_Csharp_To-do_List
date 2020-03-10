@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using lab4a.Data;
 using lab4a.Models;
 using lab4a.Data.Dao;
+using System.Security.Claims;
 
 namespace lab4a.Controllers
 {
@@ -23,7 +24,10 @@ namespace lab4a.Controllers
         [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Item.ToListAsync());
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
+            ViewData["list"] = await _dao.Item.ToListAsync();
+            ViewData["id"] = UserId;
+            return View();
         }
 
         // GET: Items/Details/5
@@ -44,40 +48,18 @@ namespace lab4a.Controllers
             return View(item);
         }
 
-        // GET: Items/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
         // POST: Items/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Text,Done,Date")] Item item)
+        public async Task<IActionResult> Create([Bind("UserId,Text,Date")] Item item)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(item);
-                await _context.SaveChangesAsync();
+                _dao.Add(item);
+                await _dao.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
-            return View(item);
-        }
-
-        // GET: Items/Edit/5
-        public async Task<IActionResult> Edit(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var item = await _context.Item.FindAsync(id);
-            if (item == null)
-            {
-                return NotFound();
             }
             return View(item);
         }
@@ -98,40 +80,17 @@ namespace lab4a.Controllers
             {
                 try
                 {
-                    _context.Update(item);
-                    await _context.SaveChangesAsync();
+                    _dao.Update(item);
+                    item.Done = !item.Done;
+                    await _dao.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ItemExists(item.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
+                
                 return RedirectToAction(nameof(Index));
             }
-            return View(item);
-        }
-
-        // GET: Items/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var item = await _context.Item
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-
             return View(item);
         }
 
@@ -140,9 +99,9 @@ namespace lab4a.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var item = await _context.Item.FindAsync(id);
-            _context.Item.Remove(item);
-            await _context.SaveChangesAsync();
+            var item = await _dao.Item.FindAsync(id);
+            _dao.Item.Remove(item);
+            await _dao.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
     }
