@@ -1,25 +1,52 @@
-﻿@model IEnumerable<lab4a.Models.Item>
+﻿@model lab4a.Models.Item
 
 @{
     ViewData["Title"] = "Index";
+    var UserId = ViewData["id"];
+
 }
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="UserId" hidden class="control-label"></label>
+        <input asp-for="UserId" hidden value="@UserId" class="form-control" />
+        <span asp-validation-for="UserId"  class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Text" class="control-label"></label>
+        <input asp-for="Text" class="form-control" />
+        <span asp-validation-for="Text" class="text-danger"></span>
+    </div>
+    <div class="form-group form-check">
+        <label class="form-check-label">
+            <input class="form-check-input" asp-for="Done" /> @Html.DisplayNameFor(model => model.Done)
+        </label>
+    </div>
+    <div class="form-group">
+        <label asp-for="Date" class="control-label"></label>
+        <input asp-for="Date" class="form-control" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+
+
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.UserId)
+                @Html.DisplayNameFor(model => model.Done)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Text)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Done)
+                @Html.DisplayNameFor(model => model.Date)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Date)
@@ -28,26 +55,42 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var element in ViewData["items"] as IEnumerable<Item>)
+        {
+            //do stuff
+        
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.UserId)
+              <form asp-action="Edit"> 
+                <button>  
+                 @Html.DisplayFor(modelItem => element.Done) 
+                </button>
+                <input asp-for="Date" value="@element.Date" hidden/>
+                <input asp-for="Id" value="@element.Id" hidden/>
+                <input asp-for="UserId" value="@element.UserId" hidden/>
+                <input asp-for="Text" value="@element.Text" hidden/>
+                <input asp-for="Done" value="@element.Done" hidden/>
+              </form>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Text)
+                @Html.DisplayFor(modelItem => element.Text)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Done)
+                @Html.DisplayFor(modelItem => element.Date)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Date)
+                @Html.DisplayFor(modelItem => element.Date)
+                <form asp-action="DeleteConfirmed">
+                    <input value="@element.Id" hidden />
+                    <input type = "submit" />
+                </form>
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@element.Id">Edit</a> |
+ |
+                <a asp-action="Delete" asp-route-id="@element.Id">Delete</a>
             </td>
         </tr>
-}
+        }
     </tbody>
 </table>

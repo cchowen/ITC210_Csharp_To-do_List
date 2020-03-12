@@ -25,28 +25,11 @@ namespace lab4a.Controllers
         public async Task<IActionResult> Index()
         {
             var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
-            ViewData["list"] = await _dao.Item.ToListAsync();
             ViewData["id"] = UserId;
+            ViewData["items"] = await _dao.Read(UserId);
             return View();
         }
 
-        // GET: Items/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var item = await _context.Item
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-            return View(item);
-        }
 
         // POST: Items/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -57,8 +40,7 @@ namespace lab4a.Controllers
         {
             if (ModelState.IsValid)
             {
-                _dao.Add(item);
-                await _dao.SaveChangesAsync();
+                await _dao.Create(item);
                 return RedirectToAction(nameof(Index));
             }
             return View(item);
@@ -80,9 +62,10 @@ namespace lab4a.Controllers
             {
                 try
                 {
-                    _dao.Update(item);
+                    var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    await _dao.Get(item.Id);
                     item.Done = !item.Done;
-                    await _dao.SaveChangesAsync();
+                    await _dao.Update(item);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -99,9 +82,8 @@ namespace lab4a.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var item = await _dao.Item.FindAsync(id);
-            _dao.Item.Remove(item);
-            await _dao.SaveChangesAsync();
+            await _dao.Get(id);
+            await _dao.Delete(id);
             return RedirectToAction(nameof(Index));
         }
     }

@@ -14,12 +14,12 @@ namespace lab4a.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         [BsonElement("UserId")]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         [BsonElement("Text")]
         public string Text { get; set; }
         [BsonElement("Done")]
         public bool Done { get; set; }
         [BsonElement("Date")]
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
     }
 }
