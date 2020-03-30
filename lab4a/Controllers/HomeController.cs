@@ -20,7 +20,7 @@ namespace lab4a.Controllers
         [Microsoft.AspNetCore.Authorization.Authorize]
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "ItemsController");
+            return RedirectToAction("Index", "Items");
         }
 
         public IActionResult Privacy()

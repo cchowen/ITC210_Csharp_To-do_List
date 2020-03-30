@@ -9,6 +9,7 @@ using lab4a.Data;
 using lab4a.Models;
 using lab4a.Data.Dao;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace lab4a.Controllers
 {
@@ -21,7 +22,7 @@ namespace lab4a.Controllers
         }
 
         // GET: Items
-        [Microsoft.AspNetCore.Authorization.Authorize]
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
@@ -57,13 +58,11 @@ namespace lab4a.Controllers
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    await _dao.Get(item.Id);
+                    await _dao.Get(id);
                     item.Done = !item.Done;
                     await _dao.Update(item);
                 }
@@ -82,7 +81,7 @@ namespace lab4a.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            await _dao.Get(id);
+            var item = await _dao.Get(id);
             await _dao.Delete(id);
             return RedirectToAction(nameof(Index));
         }

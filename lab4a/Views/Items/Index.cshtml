@@ -17,7 +17,7 @@
     </div>
     <div class="form-group">
         <label asp-for="Text" class="control-label"></label>
-        <input asp-for="Text" class="form-control" />
+        <input asp-for="Text" class="form-control" required/>
         <span asp-validation-for="Text" class="text-danger"></span>
     </div>
     <div class="form-group form-check">
@@ -27,7 +27,7 @@
     </div>
     <div class="form-group">
         <label asp-for="Date" class="control-label"></label>
-        <input asp-for="Date" class="form-control" />
+        <input asp-for="Date" class="form-control" required />
         <span asp-validation-for="Date" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -49,7 +49,7 @@
                 @Html.DisplayNameFor(model => model.Date)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Date)
+                Delete
             </th>
             <th></th>
         </tr>
@@ -58,18 +58,18 @@
         @foreach (var element in ViewData["items"] as IEnumerable<Item>)
         {
             //do stuff
-        
+
         <tr>
             <td>
               <form asp-action="Edit"> 
-                <button>  
+                <button type="submit">  
                  @Html.DisplayFor(modelItem => element.Done) 
                 </button>
-                <input asp-for="Date" value="@element.Date" hidden/>
-                <input asp-for="Id" value="@element.Id" hidden/>
-                <input asp-for="UserId" value="@element.UserId" hidden/>
-                <input asp-for="Text" value="@element.Text" hidden/>
-                <input asp-for="Done" value="@element.Done" hidden/>
+                <input type="hidden" asp-for="Date" value="@element.Date"/>
+                <input type="hidden" asp-for="Id" value="@element.Id"/>
+                <input type="hidden" asp-for="UserId" value="@element.UserId"/>
+                <input type="hidden" asp-for="Text" value="@element.Text"/>
+                <input type="hidden" asp-for="Done" value="@element.Done"/>
               </form>
             </td>
             <td>
@@ -79,16 +79,12 @@
                 @Html.DisplayFor(modelItem => element.Date)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => element.Date)
-                <form asp-action="DeleteConfirmed">
-                    <input value="@element.Id" hidden />
-                    <input type = "submit" />
+                <form asp-action="Delete">
+                    <input asp-for="Id" value="@element.Id" hidden />
+                    <input type = "submit" value="Delete"/>
                 </form>
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@element.Id">Edit</a> |
- |
-                <a asp-action="Delete" asp-route-id="@element.Id">Delete</a>
             </td>
         </tr>
         }
